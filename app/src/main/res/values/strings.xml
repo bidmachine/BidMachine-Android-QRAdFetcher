@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">QR Ad Fetcher</string>
+
+    <string name="choose_ad_type">Choose ad type</string>
+    <string name="banner">Banner</string>
+    <string name="interstitial">Interstitial</string>
+    <string name="video">Video</string>
+
+    <string name="choose_action">Choose action</string>
+    <string name="home">Home</string>
+    <string name="load_ad">Load Ad</string>
+    <string name="Show_ad">Show Ad</string>
+
+</resources>
