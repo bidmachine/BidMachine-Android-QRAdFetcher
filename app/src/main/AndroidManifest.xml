@@ -31,4 +31,5 @@
         <activity android:name=".activity.AdManagerActivity" />
 
     </application>
+
 </manifest>

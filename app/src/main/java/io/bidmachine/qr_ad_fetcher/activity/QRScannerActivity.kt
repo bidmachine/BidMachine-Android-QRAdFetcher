@@ -4,14 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.PointF
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import io.bidmachine.qr_ad_fetcher.AdType
-import io.bidmachine.qr_ad_fetcher.R
-import kotlinx.android.synthetic.main.activity_qr_scanner.*
+import io.bidmachine.qr_ad_fetcher.databinding.ActivityQrScannerBinding
 import java.net.URL
 
-class QRScannerActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadListener {
+class QRScannerActivity : BindingActivity<ActivityQrScannerBinding>(),
+    QRCodeReaderView.OnQRCodeReadListener {
 
     companion object {
 
@@ -28,27 +28,32 @@ class QRScannerActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadList
     private lateinit var adType: AdType
     private var isQrCodeRead = false
 
+    override fun inflate(inflater: LayoutInflater) = ActivityQrScannerBinding.inflate(inflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_qr_scanner)
 
         adType = intent.getSerializableExtra(BUNDLE_AD_TYPE) as AdType
 
-        qrCodeScanner.setQRDecodingEnabled(true)
-        qrCodeScanner.setAutofocusInterval(2000)
-        qrCodeScanner.setBackCamera()
-        qrCodeScanner.setOnQRCodeReadListener(this)
+        binding.qrCodeScanner.apply {
+            setQRDecodingEnabled(true)
+            setAutofocusInterval(2000)
+            setBackCamera()
+            setOnQRCodeReadListener(this@QRScannerActivity)
+        }
     }
 
     override fun onResume() {
         super.onResume()
+
         isQrCodeRead = false
-        qrCodeScanner.startCamera()
+        binding.qrCodeScanner.startCamera()
     }
 
     override fun onPause() {
         super.onPause()
-        qrCodeScanner.stopCamera()
+
+        binding.qrCodeScanner.stopCamera()
     }
 
     override fun onQRCodeRead(text: String?, points: Array<out PointF>?) {

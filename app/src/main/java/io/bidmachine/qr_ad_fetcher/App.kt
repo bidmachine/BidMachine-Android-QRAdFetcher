@@ -10,4 +10,5 @@ class App : Application() {
 
         WebView.setWebContentsDebuggingEnabled(true)
     }
+
 }

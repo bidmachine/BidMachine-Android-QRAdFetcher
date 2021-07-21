@@ -1,6 +1,8 @@
 package io.bidmachine.qr_ad_fetcher.ad
 
+import android.app.Activity
 import android.content.Context
+import com.explorestack.iab.utils.IabClickCallback
 import com.explorestack.iab.vast.*
 import com.explorestack.iab.vast.activity.VastActivity
 import io.bidmachine.qr_ad_fetcher.Helper
@@ -21,12 +23,10 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
             }
     }
 
-    override fun showAd(context: Context) {
-        if (vastRequest != null && vastRequest!!.checkFile()) {
-            vastRequest?.display(context, VideoType.NonRewarded, listener)
-        } else {
-            adListener.onAdFailedToShown()
-        }
+    override fun showAd(activity: Activity) {
+        vastRequest?.takeIf {
+            it.checkFile()
+        }?.display(activity, VideoType.NonRewarded, listener) ?: adListener.onAdFailedToShown()
     }
 
     override fun destroy() {
@@ -37,33 +37,38 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
         VastRequestListener,
         VastActivityListener {
 
-        override fun onVastLoaded(p0: VastRequest) {
+        override fun onVastLoaded(vastRequest: VastRequest) {
             listener.onAdLoaded()
         }
 
-        override fun onVastError(p0: Context, p1: VastRequest, p2: Int) {
-            listener.onAdFailedToLoad()
+        override fun onVastError(context: Context, vastRequest: VastRequest, errorCode: Int) {
+            if (errorCode == VastError.ERROR_CODE_SHOW_FAILED) {
+                listener.onAdFailedToShown()
+            } else {
+                listener.onAdFailedToLoad()
+            }
         }
 
-        override fun onVastShown(p0: VastActivity, p1: VastRequest) {
+        override fun onVastShown(vastActivity: VastActivity, vastRequest: VastRequest) {
             listener.onAdShown()
         }
 
-        override fun onVastComplete(p0: VastActivity, p1: VastRequest) {
+        override fun onVastComplete(vastActivity: VastActivity, vastRequest: VastRequest) {
 
         }
 
-        override fun onVastClick(
-            p0: VastActivity,
-            p1: VastRequest,
-            p2: VastClickCallback,
-            url: String?
-        ) {
+        override fun onVastClick(vastActivity: VastActivity,
+                                 vastRequest: VastRequest,
+                                 callback: IabClickCallback,
+                                 url: String?) {
             listener.onAdClicked()
+
             Helper.openBrowser(context, url)
         }
 
-        override fun onVastDismiss(p0: VastActivity, p1: VastRequest?, p2: Boolean) {
+        override fun onVastDismiss(vastActivity: VastActivity,
+                                   vastRequest: VastRequest?,
+                                   finished: Boolean) {
             listener.onAdClosed()
         }
 

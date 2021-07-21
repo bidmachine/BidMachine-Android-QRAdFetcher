@@ -1,37 +1,32 @@
 package io.bidmachine.qr_ad_fetcher.ad
 
+import android.app.Activity
 import android.content.Context
-import android.webkit.WebView
-import com.explorestack.iab.mraid.MRAIDInterstitial
-import com.explorestack.iab.mraid.MRAIDInterstitialListener
-import com.explorestack.iab.mraid.MRAIDNativeFeatureListener
-import com.explorestack.iab.mraid.activity.MraidActivity
+import com.explorestack.iab.mraid.MraidActivity
+import com.explorestack.iab.mraid.MraidError
+import com.explorestack.iab.mraid.MraidInterstitial
+import com.explorestack.iab.mraid.MraidInterstitialListener
+import com.explorestack.iab.utils.IabClickCallback
 import io.bidmachine.qr_ad_fetcher.Helper
 
 class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
-    private lateinit var listener: Listener
-
-    private var interstitial: MRAIDInterstitial? = null
+    private var interstitial: MraidInterstitial? = null
 
     override fun loadAd(context: Context, adm: String) {
-        listener = Listener(context, adListener)
-        interstitial = MRAIDInterstitial.newBuilder(context, adm, 320, 480)
+        interstitial = MraidInterstitial.newBuilder()
             .setPreload(true)
-            .setListener(listener)
-            .setNativeFeatureListener(listener)
-            .build()
+            .setListener(Listener(context, adListener))
+            .build(context)
             .apply {
-                load()
+                load(adm)
             }
     }
 
-    override fun showAd(context: Context) {
-        if (interstitial != null && interstitial!!.isReady) {
-            MraidActivity.show(context, interstitial, MraidActivity.MraidType.Static, listener)
-        } else {
-            adListener.onAdFailedToShown()
-        }
+    override fun showAd(activity: Activity) {
+        interstitial?.takeIf {
+            it.isReady
+        }?.show(activity, MraidActivity.MraidType.Static) ?: adListener.onAdFailedToShown()
     }
 
     override fun destroy() {
@@ -39,56 +34,38 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
         interstitial = null
     }
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener) :
-        MRAIDInterstitialListener,
-        MRAIDNativeFeatureListener, MraidActivity.MraidActivityListener {
+    private class Listener(private val context: Context, private val listener: Ad.Listener)
+        : MraidInterstitialListener {
 
-        override fun mraidInterstitialLoaded(p0: MRAIDInterstitial?) {
+        override fun onLoaded(mraidInterstitial: MraidInterstitial) {
             listener.onAdLoaded()
         }
 
-        override fun mraidInterstitialNoFill(p0: MRAIDInterstitial?) {
-            listener.onAdFailedToLoad()
+        override fun onError(mraidInterstitial: MraidInterstitial, errorCode: Int) {
+            if (errorCode == MraidError.SHOW_ERROR) {
+                listener.onAdFailedToShown()
+            } else {
+                listener.onAdFailedToLoad()
+            }
         }
 
-        override fun mraidInterstitialShow(p0: MRAIDInterstitial?) {
+        override fun onShown(mraidInterstitial: MraidInterstitial) {
             listener.onAdShown()
         }
 
-        override fun onMraidActivityShowFailed() {
-
-        }
-
-        override fun mraidNativeFeatureOpenBrowser(url: String?, p1: WebView?) {
+        override fun onOpenBrowser(mraidInterstitial: MraidInterstitial,
+                                   url: String,
+                                   callback: IabClickCallback) {
             listener.onAdClicked()
+
             Helper.openBrowser(context, url)
         }
 
-        override fun mraidInterstitialHide(p0: MRAIDInterstitial?) {
+        override fun onClose(mraidInterstitial: MraidInterstitial) {
             listener.onAdClosed()
         }
 
-        override fun onMraidActivityClose() {
-            listener.onAdClosed()
-        }
-
-        override fun mraidNativeFeaturePlayVideo(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureCreateCalendarEvent(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureStorePicture(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureCallTel(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureSendSms(p0: String?) {
+        override fun onPlayVideo(mraidInterstitial: MraidInterstitial, url: String) {
 
         }
 

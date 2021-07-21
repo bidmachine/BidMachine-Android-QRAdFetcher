@@ -1,48 +1,42 @@
 package io.bidmachine.qr_ad_fetcher.ad
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
-import com.explorestack.iab.mraid.MRAIDNativeFeatureListener
-import com.explorestack.iab.mraid.MRAIDView
-import com.explorestack.iab.mraid.MRAIDView.builder
-import com.explorestack.iab.mraid.MRAIDViewListener
+import com.explorestack.iab.mraid.MraidError
+import com.explorestack.iab.mraid.MraidView
+import com.explorestack.iab.mraid.MraidViewListener
+import com.explorestack.iab.utils.IabClickCallback
 import com.explorestack.iab.utils.Utils
 import io.bidmachine.qr_ad_fetcher.Helper
 import java.lang.ref.WeakReference
-import kotlin.math.roundToInt
 
 class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad {
 
     private val weakReference: WeakReference<ViewGroup> = WeakReference(adContainer)
 
-    private var view: MRAIDView? = null
+    private var view: MraidView? = null
 
     override fun loadAd(context: Context, adm: String) {
-        val listener = Listener(context, adListener)
-        view = builder(context, adm, 320, 50)
+        view = MraidView.Builder()
             .setPreload(true)
-            .setListener(listener)
-            .setNativeFeatureListener(listener)
-            .build()
+            .setListener(Listener(context, adListener))
+            .build(context)
             .apply {
-                val density = Utils.getScreenDensity(context)
-                layoutParams = ViewGroup.LayoutParams(
-                    (density * 320).roundToInt(),
-                    (density * 50).roundToInt()
-                )
-                load()
+                layoutParams = ViewGroup.LayoutParams(Utils.dpToPx(context, 320F),
+                                                      Utils.dpToPx(context, 50F))
+                load(adm)
             }
     }
 
-    override fun showAd(context: Context) {
+    override fun showAd(activity: Activity) {
         val viewGroup = weakReference.get()
         if (viewGroup != null && view != null) {
             viewGroup.visibility = View.VISIBLE
             viewGroup.removeAllViews()
             viewGroup.addView(view)
-            view!!.show()
+            view!!.show(activity)
         } else {
             adListener.onAdFailedToShown()
         }
@@ -53,59 +47,45 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
             if (parent is ViewGroup) {
                 (parent as ViewGroup).removeAllViews()
             }
-            setListener(null)
-            setNativeFeatureListener(null)
             destroy()
         }
         view = null
     }
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener) :
-        MRAIDViewListener,
-        MRAIDNativeFeatureListener {
+    private class Listener(private val context: Context, private val listener: Ad.Listener)
+        : MraidViewListener {
 
-        override fun mraidViewLoaded(p0: MRAIDView?) {
+        override fun onLoaded(mraidView: MraidView) {
             listener.onAdLoaded()
         }
 
-        override fun mraidViewNoFill(p0: MRAIDView?) {
-            listener.onAdFailedToLoad()
+        override fun onError(mraidView: MraidView, errorCode: Int) {
+            if (errorCode == MraidError.SHOW_ERROR) {
+                listener.onAdFailedToShown()
+            } else {
+                listener.onAdFailedToLoad()
+            }
         }
 
-        override fun mraidViewExpand(p0: MRAIDView?) {
+        override fun onShown(mraidView: MraidView) {
             listener.onAdShown()
         }
 
-        override fun mraidNativeFeatureOpenBrowser(url: String?, p1: WebView?) {
+        override fun onOpenBrowser(mraidView: MraidView, url: String, callback: IabClickCallback) {
             listener.onAdClicked()
+
             Helper.openBrowser(context, url)
         }
 
-        override fun mraidViewClose(p0: MRAIDView?) {
+        override fun onClose(mraidView: MraidView) {
             listener.onAdClosed()
         }
 
-        override fun mraidViewResize(p0: MRAIDView?, p1: Int, p2: Int, p3: Int, p4: Int): Boolean {
-            return false
-        }
-
-        override fun mraidNativeFeaturePlayVideo(p0: String?) {
+        override fun onExpand(mraidView: MraidView) {
 
         }
 
-        override fun mraidNativeFeatureCreateCalendarEvent(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureStorePicture(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureCallTel(p0: String?) {
-
-        }
-
-        override fun mraidNativeFeatureSendSms(p0: String?) {
+        override fun onPlayVideo(mraidView: MraidView, url: String) {
 
         }
 

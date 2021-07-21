@@ -4,13 +4,12 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
 import androidx.core.app.ActivityCompat
 import io.bidmachine.qr_ad_fetcher.AdType
-import io.bidmachine.qr_ad_fetcher.R
-import kotlinx.android.synthetic.main.activity_main.*
+import io.bidmachine.qr_ad_fetcher.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BindingActivity<ActivityMainBinding>() {
 
     companion object {
 
@@ -22,17 +21,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun inflate(inflater: LayoutInflater) = ActivityMainBinding.inflate(inflater)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        bBanner.setOnClickListener {
+        binding.bBanner.setOnClickListener {
             openQRScanner(AdType.Banner)
         }
-        bInterstitial.setOnClickListener {
+        binding.bInterstitial.setOnClickListener {
             openQRScanner(AdType.Interstitial)
         }
-        bVideo.setOnClickListener {
+        binding.bVideo.setOnClickListener {
             openQRScanner(AdType.Video)
         }
 
