@@ -11,6 +11,8 @@
 5. You will get QR code
 6. Open the app. Click on the ad type and scan QR code
 
-### APKs
+### APK
 
-APKs are [here](app/release)
+APK are [here](app/release)
+
+[Releases](../../releases) also contain APK

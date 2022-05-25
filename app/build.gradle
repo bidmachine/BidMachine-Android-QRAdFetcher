@@ -16,6 +16,11 @@ android {
             minifyEnabled false
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFileName = "${rootProject.name}_${versionName}.apk"
+                }
+            }
         }
     }
 
