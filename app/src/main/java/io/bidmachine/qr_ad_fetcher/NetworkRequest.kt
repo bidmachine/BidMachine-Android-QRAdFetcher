@@ -1,83 +1,81 @@
 package io.bidmachine.qr_ad_fetcher
 
-import android.os.AsyncTask
+import com.explorestack.iab.utils.Utils
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+import java.util.concurrent.atomic.AtomicBoolean
 
 class NetworkRequest {
 
     companion object {
-
-        private var taskListener: Listener? = null
         private var networkTask: NetworkTask? = null
 
         fun getBodyByUrl(url: URL, listener: Listener) {
             clear()
-            taskListener = object : Listener {
-                override fun onSuccess(body: String) {
-                    listener.onSuccess(body)
-                }
-
-                override fun onError() {
-                    listener.onError()
-                }
+            networkTask = NetworkTask(url, listener).apply {
+                execute()
             }
-            networkTask = NetworkTask(taskListener)
-            networkTask!!.execute(url)
         }
 
         fun clear() {
-            taskListener = null
-            networkTask?.cancel(true)
+            networkTask?.cancel()
             networkTask = null
         }
-
     }
 
-    private class NetworkTask(private var listener: Listener?) : AsyncTask<URL, Void, String?>() {
 
-        override fun doInBackground(vararg params: URL?): String? {
-            val httpURLConnection = prepareConnection(params[0])
+    private class NetworkTask(private val url: URL, private var listener: Listener) : Runnable {
+
+        companion object {
+            private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2)
+        }
+
+        private val isCanceled = AtomicBoolean(false)
+
+        private var future: Future<*>? = null
+
+        override fun run() {
+            var result: String? = null
+            var httpURLConnection: HttpURLConnection? = null
             try {
-                return httpURLConnection?.inputStream?.bufferedReader()?.readText()
+                httpURLConnection = url.openConnection() as HttpURLConnection?
+                result = httpURLConnection?.inputStream?.bufferedReader()?.readText()
             } catch (e: Exception) {
                 e.printStackTrace()
-                httpURLConnection?.apply {
-                    disconnect()
-                }
+            } finally {
+                httpURLConnection?.disconnect()
             }
-            return null
-        }
-
-        private fun prepareConnection(vararg params: URL?): HttpURLConnection? {
-            if (params.isNullOrEmpty()) {
-                return null
+            if (isCanceled.get()) {
+                return
             }
-            val url = params[0] ?: return null
-            return try {
-                url.openConnection() as HttpURLConnection
-            } catch (e: Exception) {
-                null
-            }
-        }
-
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-
-            listener?.apply {
+            Utils.onUiThread {
                 if (result.isNullOrEmpty()) {
-                    onError()
+                    listener.onError()
                 } else {
-                    onSuccess(result)
+                    listener.onSuccess(result)
                 }
             }
+        }
+
+        fun execute() {
+            future = executor.submit(this)
+        }
+
+        fun cancel() {
+            isCanceled.set(true)
+            future?.cancel(true)
         }
 
     }
 
     interface Listener {
+
         fun onSuccess(body: String)
+
         fun onError()
+
     }
 
 }

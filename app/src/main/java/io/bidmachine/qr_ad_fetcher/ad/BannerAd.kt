@@ -20,14 +20,14 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
 
     override fun loadAd(context: Context, adm: String) {
         view = MraidView.Builder()
-            .setPreload(true)
-            .setListener(Listener(context, adListener))
-            .build(context)
-            .apply {
-                layoutParams = ViewGroup.LayoutParams(Utils.dpToPx(context, 320F),
-                                                      Utils.dpToPx(context, 50F))
-                load(adm)
-            }
+                .setPreload(true)
+                .setListener(Listener(context, adListener))
+                .build(context)
+                .apply {
+                    layoutParams = ViewGroup.LayoutParams(Utils.dpToPx(context, 320F),
+                                                          Utils.dpToPx(context, 50F))
+                    load(adm)
+                }
     }
 
     override fun showAd(activity: Activity) {
@@ -52,8 +52,8 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
         view = null
     }
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener)
-        : MraidViewListener {
+
+    private class Listener(private val context: Context, private val listener: Ad.Listener) : MraidViewListener {
 
         override fun onLoaded(mraidView: MraidView) {
             listener.onAdLoaded()

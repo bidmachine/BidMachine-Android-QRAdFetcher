@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion 31
     defaultConfig {
         applicationId "io.bidmachine.qr_ad_fetcher"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
-        versionName "1.0"
+        versionName "0.9.6"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -18,17 +18,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation "androidx.core:core-ktx:1.3.0"
-    implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "com.google.android.material:material:1.1.0"
+    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.4.1"
+    implementation "com.google.android.material:material:1.6.0"
 
-    implementation "com.explorestack:iab:0.9.4"
-    implementation "com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3"
+    implementation "com.explorestack:iab:0.9.6"
+    implementation "com.github.dlazaro66:QRCodeReaderView:2.0.3"
 }

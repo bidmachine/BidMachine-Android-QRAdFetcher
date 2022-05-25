@@ -16,24 +16,22 @@ import io.bidmachine.qr_ad_fetcher.ad.VideoAd
 import io.bidmachine.qr_ad_fetcher.databinding.ActivityAdManagerBinding
 import java.net.URL
 
-class AdManagerActivity
-    : BindingActivity<ActivityAdManagerBinding>(), NetworkRequest.Listener, Ad.Listener {
+class AdManagerActivity : BindingActivity<ActivityAdManagerBinding>(), NetworkRequest.Listener, Ad.Listener {
 
     companion object {
-
         private const val BUNDLE_AD_TYPE = "bundle_ad_type"
         private const val BUNDLE_URL = "bundle_url"
 
-        fun getNewIntent(context: Context, adType: AdType, url: URL): Intent {
-            val intent = Intent(context, AdManagerActivity::class.java)
-            intent.putExtra(BUNDLE_AD_TYPE, adType)
-            intent.putExtra(BUNDLE_URL, url)
-            return intent
+        fun createIntent(context: Context, adType: AdType, url: URL): Intent {
+            return Intent(context, AdManagerActivity::class.java).apply {
+                putExtra(BUNDLE_AD_TYPE, adType)
+                putExtra(BUNDLE_URL, url)
+            }
         }
-
     }
 
     private lateinit var adType: AdType
+
     private var ad: Ad? = null
 
     override fun inflate(inflater: LayoutInflater) = ActivityAdManagerBinding.inflate(inflater)
@@ -51,8 +49,9 @@ class AdManagerActivity
             }
             setOnMenuItemClickListener {
                 if (it.itemId == R.id.home) {
-                    val intent = MainActivity.getNewIntent(this@AdManagerActivity)
-                    startActivity(intent)
+                    MainActivity.createIntent(this@AdManagerActivity).also {
+                        startActivity(intent)
+                    }
                     return@setOnMenuItemClickListener true
                 }
                 return@setOnMenuItemClickListener false
@@ -68,6 +67,7 @@ class AdManagerActivity
 
     override fun onDestroy() {
         super.onDestroy()
+
         destroyAd()
         NetworkRequest.clear()
     }
@@ -80,28 +80,22 @@ class AdManagerActivity
     }
 
     private fun prepareAd(adType: AdType, adm: String) {
-        when (adType) {
+        ad = when (adType) {
             AdType.Banner -> BannerAd(this, binding.adContainer)
             AdType.Interstitial -> InterstitialAd(this)
             AdType.Video -> VideoAd(this)
         }.apply {
-            ad = this
             loadAd(this@AdManagerActivity, adm)
         }
     }
 
     private fun showAd() {
-        if (ad != null) {
-            ad!!.showAd(this)
-        } else {
-            Helper.showToast(this, "Ad Object is null")
-        }
+        ad?.showAd(this)
+            ?: Helper.showToast(this, "Ad Object is null")
     }
 
     private fun destroyAd() {
-        ad?.apply {
-            destroy()
-        }
+        ad?.destroy()
     }
 
     override fun onSuccess(body: String) {
@@ -111,18 +105,21 @@ class AdManagerActivity
     override fun onError() {
         binding.bShow.isEnabled = false
         binding.progressBar.visibility = View.INVISIBLE
+
         Helper.showToast(this, "Can't load creative by url")
     }
 
     override fun onAdLoaded() {
         binding.bShow.isEnabled = true
         binding.progressBar.visibility = View.INVISIBLE
+
         Helper.showToast(this, "Ad Loaded")
     }
 
     override fun onAdFailedToLoad() {
         binding.bShow.isEnabled = false
         binding.progressBar.visibility = View.INVISIBLE
+
         Helper.showToast(this, "Ad Failed To Load")
     }
 

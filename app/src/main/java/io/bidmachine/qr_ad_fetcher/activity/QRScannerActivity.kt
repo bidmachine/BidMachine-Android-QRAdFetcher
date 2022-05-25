@@ -10,22 +10,20 @@ import io.bidmachine.qr_ad_fetcher.AdType
 import io.bidmachine.qr_ad_fetcher.databinding.ActivityQrScannerBinding
 import java.net.URL
 
-class QRScannerActivity : BindingActivity<ActivityQrScannerBinding>(),
-    QRCodeReaderView.OnQRCodeReadListener {
+class QRScannerActivity : BindingActivity<ActivityQrScannerBinding>(), QRCodeReaderView.OnQRCodeReadListener {
 
     companion object {
-
         private const val BUNDLE_AD_TYPE = "bundle_ad_type"
 
-        fun getNewIntent(context: Context, adType: AdType): Intent {
-            val intent = Intent(context, QRScannerActivity::class.java)
-            intent.putExtra(BUNDLE_AD_TYPE, adType)
-            return intent
+        fun createIntent(context: Context, adType: AdType): Intent {
+            return Intent(context, QRScannerActivity::class.java).apply {
+                putExtra(BUNDLE_AD_TYPE, adType)
+            }
         }
-
     }
 
     private lateinit var adType: AdType
+
     private var isQrCodeRead = false
 
     override fun inflate(inflater: LayoutInflater) = ActivityQrScannerBinding.inflate(inflater)
@@ -60,17 +58,14 @@ class QRScannerActivity : BindingActivity<ActivityQrScannerBinding>(),
         if (isQrCodeRead) {
             return
         }
-        text?.apply {
-            val url = getUrl(this)
-            if (url != null) {
-                isQrCodeRead = true
-                val intent = AdManagerActivity.getNewIntent(
-                    this@QRScannerActivity,
-                    adType,
-                    url
-                )
-                startActivity(intent)
-            }
+
+        text?.let {
+            getUrl(text)
+        }?.let {
+            AdManagerActivity.createIntent(this@QRScannerActivity, adType, it)
+        }?.also {
+            isQrCodeRead = true
+            startActivity(it)
         }
     }
 

@@ -12,13 +12,11 @@ import io.bidmachine.qr_ad_fetcher.databinding.ActivityMainBinding
 class MainActivity : BindingActivity<ActivityMainBinding>() {
 
     companion object {
-
-        fun getNewIntent(context: Context): Intent {
-            val intent = Intent(context, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            return intent
+        fun createIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
         }
-
     }
 
     override fun inflate(inflater: LayoutInflater) = ActivityMainBinding.inflate(inflater)
@@ -36,16 +34,15 @@ class MainActivity : BindingActivity<ActivityMainBinding>() {
             openQRScanner(AdType.Video)
         }
 
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.CAMERA),
-            100
-        )
+        ActivityCompat.requestPermissions(this,
+                                          arrayOf(Manifest.permission.CAMERA),
+                                          100)
     }
 
     private fun openQRScanner(adType: AdType) {
-        val intent = QRScannerActivity.getNewIntent(this, adType)
-        startActivity(intent)
+        QRScannerActivity.createIntent(this, adType).also {
+            startActivity(it)
+        }
     }
 
 }

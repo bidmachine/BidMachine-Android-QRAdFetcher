@@ -16,26 +16,27 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
     override fun loadAd(context: Context, adm: String) {
         listener = Listener(context, adListener)
         vastRequest = VastRequest.newBuilder()
-            .setPreCache(true)
-            .build()
-            .apply {
-                loadVideoWithData(context, adm, listener)
-            }
+                .setPreCache(true)
+                .build()
+                .apply {
+                    loadVideoWithData(context, adm, listener)
+                }
     }
 
     override fun showAd(activity: Activity) {
         vastRequest?.takeIf {
             it.checkFile()
-        }?.display(activity, VideoType.NonRewarded, listener) ?: adListener.onAdFailedToShown()
+        }?.display(activity, VideoType.NonRewarded, listener)
+            ?: adListener.onAdFailedToShown()
     }
 
     override fun destroy() {
         vastRequest = null
     }
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener) :
-        VastRequestListener,
-        VastActivityListener {
+
+    private class Listener(private val context: Context, private val listener: Ad.Listener) : VastRequestListener,
+            VastActivityListener {
 
         override fun onVastLoaded(vastRequest: VastRequest) {
             listener.onAdLoaded()

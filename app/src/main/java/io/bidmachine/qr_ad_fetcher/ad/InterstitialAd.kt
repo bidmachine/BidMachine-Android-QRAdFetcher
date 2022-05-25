@@ -15,18 +15,19 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
     override fun loadAd(context: Context, adm: String) {
         interstitial = MraidInterstitial.newBuilder()
-            .setPreload(true)
-            .setListener(Listener(context, adListener))
-            .build(context)
-            .apply {
-                load(adm)
-            }
+                .setPreload(true)
+                .setListener(Listener(context, adListener))
+                .build(context)
+                .apply {
+                    load(adm)
+                }
     }
 
     override fun showAd(activity: Activity) {
         interstitial?.takeIf {
             it.isReady
-        }?.show(activity, MraidActivity.MraidType.Static) ?: adListener.onAdFailedToShown()
+        }?.show(activity, MraidActivity.MraidType.Static)
+            ?: adListener.onAdFailedToShown()
     }
 
     override fun destroy() {
@@ -34,8 +35,9 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
         interstitial = null
     }
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener)
-        : MraidInterstitialListener {
+
+    private class Listener(private val context: Context, private val listener: Ad.Listener) :
+            MraidInterstitialListener {
 
         override fun onLoaded(mraidInterstitial: MraidInterstitial) {
             listener.onAdLoaded()
