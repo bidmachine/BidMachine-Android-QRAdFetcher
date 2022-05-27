@@ -1,6 +1,6 @@
 # QR Ad Fetcher
 
-<img src="https://img.shields.io/badge/IAB%20SDK%20version-0.9.6-brightgreen">
+<img src="https://img.shields.io/badge/IAB%20SDK%20version-0.9.7-brightgreen">
 
 ### How to use:
 
