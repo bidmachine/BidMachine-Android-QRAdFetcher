@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 1
-        versionName "0.9.7"
+        versionName "0.9.8"
     }
 
     buildTypes {
@@ -43,6 +43,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.4.1"
     implementation "com.google.android.material:material:1.6.0"
 
-    implementation "com.explorestack:iab:0.9.7"
+    implementation "com.explorestack:iab:0.9.8"
     implementation "com.github.dlazaro66:QRCodeReaderView:2.0.3"
 }
