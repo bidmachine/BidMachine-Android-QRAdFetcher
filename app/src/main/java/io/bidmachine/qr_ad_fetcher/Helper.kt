@@ -15,13 +15,13 @@ object Helper {
     }
 
     fun openBrowser(context: Context?, url: String?) {
-        if (url.isNullOrEmpty()) {
-            context?.apply {
-                showToast(this, "Url is empty")
+        context?.let {
+            if (url.isNullOrEmpty()) {
+                showToast(it, "Url is empty")
+            } else {
+                Utils.openBrowser(it, url, null)
             }
-        } else {
-            Utils.openBrowser(context, url, null)
-        }
+        } ?: Log.d(TAG, "openBrowser error. Context is null")
     }
 
 }
