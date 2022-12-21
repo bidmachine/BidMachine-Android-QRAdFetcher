@@ -14,12 +14,12 @@ object Helper {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun openBrowser(context: Context?, url: String?) {
+    fun openBrowser(context: Context?, url: String?, postBack: Runnable?) {
         context?.let {
             if (url.isNullOrEmpty()) {
                 showToast(it, "Url is empty")
             } else {
-                Utils.openBrowser(it, url, null)
+                Utils.openBrowser(it, url, postBack)
             }
         } ?: Log.d(TAG, "openBrowser error. Context is null")
     }

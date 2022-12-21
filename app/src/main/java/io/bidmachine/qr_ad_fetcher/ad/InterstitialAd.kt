@@ -2,10 +2,11 @@ package io.bidmachine.qr_ad_fetcher.ad
 
 import android.app.Activity
 import android.content.Context
-import com.explorestack.iab.mraid.MraidActivity
+import com.explorestack.iab.CacheControl
 import com.explorestack.iab.mraid.MraidError
 import com.explorestack.iab.mraid.MraidInterstitial
 import com.explorestack.iab.mraid.MraidInterstitialListener
+import com.explorestack.iab.mraid.MraidType
 import com.explorestack.iab.utils.IabClickCallback
 import io.bidmachine.qr_ad_fetcher.Helper
 
@@ -15,7 +16,7 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
     override fun loadAd(context: Context, adm: String) {
         interstitial = MraidInterstitial.newBuilder()
-                .setPreload(true)
+                .setCacheControl(CacheControl.FullLoad)
                 .setListener(Listener(context, adListener))
                 .build(context)
                 .apply {
@@ -26,7 +27,7 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
     override fun showAd(activity: Activity) {
         interstitial?.takeIf {
             it.isReady
-        }?.show(activity, MraidActivity.MraidType.Static)
+        }?.show(activity, MraidType.Static)
             ?: adListener.onAdFailedToShown()
     }
 
@@ -60,7 +61,9 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
                                    callback: IabClickCallback) {
             listener.onAdClicked()
 
-            Helper.openBrowser(context, url)
+            Helper.openBrowser(context, url) {
+                callback.clickHandled()
+            }
         }
 
         override fun onClose(mraidInterstitial: MraidInterstitial) {

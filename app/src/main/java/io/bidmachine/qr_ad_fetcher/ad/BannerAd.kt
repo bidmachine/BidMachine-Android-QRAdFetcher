@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import com.explorestack.iab.CacheControl
 import com.explorestack.iab.mraid.MraidError
 import com.explorestack.iab.mraid.MraidView
 import com.explorestack.iab.mraid.MraidViewListener
@@ -20,7 +21,7 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
 
     override fun loadAd(context: Context, adm: String) {
         view = MraidView.Builder()
-                .setPreload(true)
+                .setCacheControl(CacheControl.FullLoad)
                 .setListener(Listener(context, adListener))
                 .build(context)
                 .apply {
@@ -74,7 +75,9 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
         override fun onOpenBrowser(mraidView: MraidView, url: String, callback: IabClickCallback) {
             listener.onAdClicked()
 
-            Helper.openBrowser(context, url)
+            Helper.openBrowser(context, url) {
+                callback.clickHandled()
+            }
         }
 
         override fun onClose(mraidView: MraidView) {

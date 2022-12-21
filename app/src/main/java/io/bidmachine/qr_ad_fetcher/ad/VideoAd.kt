@@ -2,6 +2,7 @@ package io.bidmachine.qr_ad_fetcher.ad
 
 import android.app.Activity
 import android.content.Context
+import com.explorestack.iab.CacheControl
 import com.explorestack.iab.utils.IabClickCallback
 import com.explorestack.iab.vast.*
 import com.explorestack.iab.vast.activity.VastActivity
@@ -16,7 +17,7 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
     override fun loadAd(context: Context, adm: String) {
         listener = Listener(context, adListener)
         vastRequest = VastRequest.newBuilder()
-                .setPreCache(true)
+                .setCacheControl(CacheControl.FullLoad)
                 .build()
                 .apply {
                     loadVideoWithData(context, adm, listener)
@@ -64,7 +65,9 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
                                  url: String?) {
             listener.onAdClicked()
 
-            Helper.openBrowser(context, url)
+            Helper.openBrowser(context, url) {
+                callback.clickHandled()
+            }
         }
 
         override fun onVastDismiss(vastActivity: VastActivity,
