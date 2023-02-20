@@ -3,8 +3,12 @@ package io.bidmachine.qr_ad_fetcher.ad
 import android.app.Activity
 import android.content.Context
 import com.explorestack.iab.CacheControl
+import com.explorestack.iab.IabError
 import com.explorestack.iab.utils.IabClickCallback
-import com.explorestack.iab.vast.*
+import com.explorestack.iab.vast.VastActivityListener
+import com.explorestack.iab.vast.VastRequest
+import com.explorestack.iab.vast.VastRequestListener
+import com.explorestack.iab.vast.VideoType
 import com.explorestack.iab.vast.activity.VastActivity
 import io.bidmachine.qr_ad_fetcher.Helper
 
@@ -43,16 +47,16 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
             listener.onAdLoaded()
         }
 
-        override fun onVastError(context: Context, vastRequest: VastRequest, errorCode: Int) {
-            if (errorCode == VastError.ERROR_CODE_SHOW_FAILED) {
-                listener.onAdFailedToShown()
-            } else {
-                listener.onAdFailedToLoad()
-            }
+        override fun onVastLoadFailed(vastRequest: VastRequest, iabError: IabError) {
+            listener.onAdFailedToLoad()
         }
 
         override fun onVastShown(vastActivity: VastActivity, vastRequest: VastRequest) {
             listener.onAdShown()
+        }
+
+        override fun onVastShowFailed(vastRequest: VastRequest?, iabError: IabError) {
+            listener.onAdFailedToShown()
         }
 
         override fun onVastComplete(vastActivity: VastActivity, vastRequest: VastRequest) {

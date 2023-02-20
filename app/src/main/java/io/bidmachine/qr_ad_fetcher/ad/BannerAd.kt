@@ -5,7 +5,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import com.explorestack.iab.CacheControl
-import com.explorestack.iab.mraid.MraidError
+import com.explorestack.iab.IabError
 import com.explorestack.iab.mraid.MraidView
 import com.explorestack.iab.mraid.MraidViewListener
 import com.explorestack.iab.utils.IabClickCallback
@@ -60,16 +60,16 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
             listener.onAdLoaded()
         }
 
-        override fun onError(mraidView: MraidView, errorCode: Int) {
-            if (errorCode == MraidError.SHOW_ERROR) {
-                listener.onAdFailedToShown()
-            } else {
-                listener.onAdFailedToLoad()
-            }
+        override fun onLoadFailed(mraidView: MraidView, iabError: IabError) {
+            listener.onAdFailedToLoad()
         }
 
         override fun onShown(mraidView: MraidView) {
             listener.onAdShown()
+        }
+
+        override fun onShowFailed(mraidView: MraidView, iabError: IabError) {
+            listener.onAdFailedToShown()
         }
 
         override fun onOpenBrowser(mraidView: MraidView, url: String, callback: IabClickCallback) {

@@ -3,7 +3,7 @@ package io.bidmachine.qr_ad_fetcher.ad
 import android.app.Activity
 import android.content.Context
 import com.explorestack.iab.CacheControl
-import com.explorestack.iab.mraid.MraidError
+import com.explorestack.iab.IabError
 import com.explorestack.iab.mraid.MraidInterstitial
 import com.explorestack.iab.mraid.MraidInterstitialListener
 import com.explorestack.iab.mraid.MraidType
@@ -44,16 +44,16 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
             listener.onAdLoaded()
         }
 
-        override fun onError(mraidInterstitial: MraidInterstitial, errorCode: Int) {
-            if (errorCode == MraidError.SHOW_ERROR) {
-                listener.onAdFailedToShown()
-            } else {
-                listener.onAdFailedToLoad()
-            }
+        override fun onLoadFailed(mraidInterstitial: MraidInterstitial, iabError: IabError) {
+            listener.onAdFailedToLoad()
         }
 
         override fun onShown(mraidInterstitial: MraidInterstitial) {
             listener.onAdShown()
+        }
+
+        override fun onShowFailed(mraidInterstitial: MraidInterstitial, iabError: IabError) {
+            listener.onAdFailedToShown()
         }
 
         override fun onOpenBrowser(mraidInterstitial: MraidInterstitial,
