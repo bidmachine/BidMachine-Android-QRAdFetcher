@@ -7,8 +7,8 @@ android {
         applicationId "io.bidmachine.qr_ad_fetcher"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 3
-        versionName "1.5.0"
+        versionCode 4
+        versionName "1.5.2"
     }
 
     buildTypes {
@@ -43,6 +43,6 @@ dependencies {
     implementation "androidx.appcompat:appcompat:1.4.2"
     implementation "com.google.android.material:material:1.6.1"
 
-    implementation "com.explorestack:iab:1.5.0"
+    implementation "com.explorestack:iab:1.5.2"
     implementation "com.github.dlazaro66:QRCodeReaderView:2.0.3"
 }
