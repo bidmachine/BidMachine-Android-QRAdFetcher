@@ -13,16 +13,22 @@ android {
         versionName "1.9.0"
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.file("test.keystore")
+            storePassword "123456"
+            keyAlias "test"
+            keyPassword "123456"
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
-            debuggable true
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFileName = "${rootProject.name}_${versionName}.apk"
-                }
-            }
+            signingConfig signingConfigs.release
         }
     }
 
@@ -37,6 +43,12 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    applicationVariants.configureEach { variant ->
+        variant.outputs.each { output ->
+            output.outputFileName = "${rootProject.name}_${versionName}.apk"
+        }
     }
 }
 
