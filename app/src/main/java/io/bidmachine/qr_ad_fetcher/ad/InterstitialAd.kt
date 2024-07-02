@@ -56,6 +56,10 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
             listener.onAdFailedToShown()
         }
 
+        override fun onExpired(mraidInterstitial: MraidInterstitial, iabError: IabError) {
+            listener.onAdExpired()
+        }
+
         override fun onOpenBrowser(mraidInterstitial: MraidInterstitial,
                                    url: String,
                                    callback: IabClickCallback) {

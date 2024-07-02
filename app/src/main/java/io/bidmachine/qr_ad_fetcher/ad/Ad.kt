@@ -22,6 +22,8 @@ interface Ad {
 
         fun onAdFailedToShown()
 
+        fun onAdExpired()
+
         fun onAdClicked()
 
         fun onAdClosed()

@@ -2,13 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+    namespace "io.bidmachine.qr_ad_fetcher"
+
+    compileSdk 34
     defaultConfig {
         applicationId "io.bidmachine.qr_ad_fetcher"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdk 34
         versionCode 4
-        versionName "1.5.2"
+        versionName "1.9.0"
     }
 
     buildTypes {
@@ -39,10 +41,10 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core-ktx:1.8.0"
-    implementation "androidx.appcompat:appcompat:1.4.2"
-    implementation "com.google.android.material:material:1.6.1"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "com.google.android.material:material:1.12.0"
 
-    implementation "com.explorestack:iab:1.5.2"
+    implementation "com.explorestack:iab:1.9.0"
     implementation "com.github.dlazaro66:QRCodeReaderView:2.0.3"
 }

@@ -6,10 +6,8 @@
     <color name="colorAccent">@color/bid_machine_blue</color>
     <color name="colorText">@color/bid_machine_blue</color>
 
-    <color name="bid_machine_red">#E84039</color>
     <color name="bid_machine_yellow">#FCBE46</color>
     <color name="bid_machine_yellow_dark">#f08234</color>
     <color name="bid_machine_blue">#223551</color>
-    <color name="bid_machine_gray">#6E7B8D</color>
 
 </resources>

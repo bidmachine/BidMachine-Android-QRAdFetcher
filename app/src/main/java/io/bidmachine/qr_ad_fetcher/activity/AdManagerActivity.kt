@@ -131,6 +131,10 @@ class AdManagerActivity : BindingActivity<ActivityAdManagerBinding>(), NetworkRe
         Helper.showToast(this, "Ad Failed To Shown")
     }
 
+    override fun onAdExpired() {
+        Helper.showToast(this, "Ad Expired")
+    }
+
     override fun onAdClicked() {
         Helper.showToast(this, "Ad Clicked")
     }

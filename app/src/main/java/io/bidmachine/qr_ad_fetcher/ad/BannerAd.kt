@@ -72,6 +72,10 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
             listener.onAdFailedToShown()
         }
 
+        override fun onExpired(mraidView: MraidView, iabError: IabError) {
+            listener.onAdExpired()
+        }
+
         override fun onOpenBrowser(mraidView: MraidView, url: String, callback: IabClickCallback) {
             listener.onAdClicked()
 
