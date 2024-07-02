@@ -1,7 +1,5 @@
 # QR Ad Fetcher
 
-<img src="https://img.shields.io/badge/IAB%20SDK%20version-1.5.2-brightgreen">
-
 ### How to use:
 
 1. Save creative raw code on the site https://designer.mocky.io/design
