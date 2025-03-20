@@ -11,4 +11,4 @@
 
 ### APK
 
-Please find the APK in the latest release's [artifacts](../../releases)
+Please find the APK in the latest release's [assets](../../releases)
