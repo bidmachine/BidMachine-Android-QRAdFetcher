@@ -4,13 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import com.explorestack.iab.CacheControl
-import com.explorestack.iab.IabError
-import com.explorestack.iab.mraid.MraidView
-import com.explorestack.iab.mraid.MraidViewListener
-import com.explorestack.iab.utils.IabClickCallback
-import com.explorestack.iab.utils.Utils
+import io.bidmachine.iab.CacheControl
+import io.bidmachine.iab.IabError
+import io.bidmachine.iab.mraid.MraidView
+import io.bidmachine.iab.mraid.MraidViewListener
+import io.bidmachine.iab.utils.IabClickCallback
+import io.bidmachine.iab.utils.Utils
 import io.bidmachine.qr_ad_fetcher.Helper
+import io.bidmachine.rendering.model.PrivacySheetParams
 import java.lang.ref.WeakReference
 
 class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad {
@@ -21,14 +22,16 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
 
     override fun loadAd(context: Context, adm: String) {
         view = MraidView.Builder()
-                .setCacheControl(CacheControl.FullLoad)
-                .setListener(Listener(context, adListener))
-                .build(context)
-                .apply {
-                    layoutParams = ViewGroup.LayoutParams(Utils.dpToPx(context, 320F),
-                                                          Utils.dpToPx(context, 50F))
-                    load(adm)
-                }
+            .setCacheControl(CacheControl.FullLoad)
+            .setListener(Listener(context, adListener))
+            .build(context)
+            .apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    Utils.dpToPx(context, 320F),
+                    Utils.dpToPx(context, 50F)
+                )
+                load(adm)
+            }
     }
 
     override fun showAd(activity: Activity) {
@@ -54,7 +57,8 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
     }
 
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener) : MraidViewListener {
+    private class Listener(private val context: Context, private val listener: Ad.Listener) :
+        MraidViewListener {
 
         override fun onLoaded(mraidView: MraidView) {
             listener.onAdLoaded()
@@ -76,12 +80,19 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
             listener.onAdExpired()
         }
 
-        override fun onOpenBrowser(mraidView: MraidView, url: String, callback: IabClickCallback) {
+        override fun onOpenUrl(mraidView: MraidView, url: String, callback: IabClickCallback) {
             listener.onAdClicked()
 
             Helper.openBrowser(context, url) {
                 callback.clickHandled()
             }
+        }
+
+        override fun onOpenPrivacySheet(
+            mraidView: MraidView,
+            privacySheetParams: PrivacySheetParams
+        ) {
+
         }
 
         override fun onClose(mraidView: MraidView) {
@@ -93,6 +104,22 @@ class BannerAd(private val adListener: Ad.Listener, adContainer: ViewGroup) : Ad
         }
 
         override fun onPlayVideo(mraidView: MraidView, url: String) {
+
+        }
+
+        override fun onCalendarEvent(
+            mraidView: MraidView,
+            url: String,
+            iabClickCallback: IabClickCallback
+        ) {
+
+        }
+
+        override fun onStorePicture(
+            mraidView: MraidView,
+            url: String,
+            iabClickCallback: IabClickCallback
+        ) {
 
         }
 

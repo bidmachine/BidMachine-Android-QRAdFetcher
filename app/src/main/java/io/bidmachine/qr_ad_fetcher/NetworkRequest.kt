@@ -1,6 +1,6 @@
 package io.bidmachine.qr_ad_fetcher
 
-import com.explorestack.iab.utils.Utils
+import io.bidmachine.iab.utils.Utils
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
@@ -29,7 +29,8 @@ class NetworkRequest {
     private class NetworkTask(private val url: URL, private var listener: Listener) : Runnable {
 
         companion object {
-            private val executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2)
+            private val executor =
+                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2)
         }
 
         private val isCanceled = AtomicBoolean(false)

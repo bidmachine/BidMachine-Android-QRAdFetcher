@@ -2,14 +2,14 @@ package io.bidmachine.qr_ad_fetcher.ad
 
 import android.app.Activity
 import android.content.Context
-import com.explorestack.iab.CacheControl
-import com.explorestack.iab.IabError
-import com.explorestack.iab.utils.IabClickCallback
-import com.explorestack.iab.vast.VastActivityListener
-import com.explorestack.iab.vast.VastRequest
-import com.explorestack.iab.vast.VastRequestListener
-import com.explorestack.iab.vast.VideoType
-import com.explorestack.iab.vast.activity.VastActivity
+import io.bidmachine.iab.CacheControl
+import io.bidmachine.iab.IabError
+import io.bidmachine.iab.utils.IabClickCallback
+import io.bidmachine.iab.vast.VastActivityListener
+import io.bidmachine.iab.vast.VastRequest
+import io.bidmachine.iab.vast.VastRequestListener
+import io.bidmachine.iab.vast.VideoType
+import io.bidmachine.iab.vast.activity.VastActivity
 import io.bidmachine.qr_ad_fetcher.Helper
 
 class VideoAd(private val adListener: Ad.Listener) : Ad {
@@ -21,11 +21,11 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
     override fun loadAd(context: Context, adm: String) {
         listener = Listener(context, adListener)
         vastRequest = VastRequest.newBuilder()
-                .setCacheControl(CacheControl.FullLoad)
-                .build()
-                .apply {
-                    loadVideoWithData(context, adm, listener)
-                }
+            .setCacheControl(CacheControl.FullLoad)
+            .build()
+            .apply {
+                loadVideoWithData(context, adm, listener)
+            }
     }
 
     override fun showAd(activity: Activity) {
@@ -40,8 +40,9 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
     }
 
 
-    private class Listener(private val context: Context, private val listener: Ad.Listener) : VastRequestListener,
-            VastActivityListener {
+    private class Listener(private val context: Context, private val listener: Ad.Listener) :
+        VastRequestListener,
+        VastActivityListener {
 
         override fun onVastLoaded(vastRequest: VastRequest) {
             listener.onAdLoaded()
@@ -63,10 +64,12 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
 
         }
 
-        override fun onVastClick(vastActivity: VastActivity,
-                                 vastRequest: VastRequest,
-                                 callback: IabClickCallback,
-                                 url: String?) {
+        override fun onVastClick(
+            vastActivity: VastActivity,
+            vastRequest: VastRequest,
+            callback: IabClickCallback,
+            url: String
+        ) {
             listener.onAdClicked()
 
             Helper.openBrowser(context, url) {
@@ -74,9 +77,11 @@ class VideoAd(private val adListener: Ad.Listener) : Ad {
             }
         }
 
-        override fun onVastDismiss(vastActivity: VastActivity,
-                                   vastRequest: VastRequest?,
-                                   finished: Boolean) {
+        override fun onVastDismiss(
+            vastActivity: VastActivity,
+            vastRequest: VastRequest?,
+            finished: Boolean
+        ) {
             listener.onAdClosed()
         }
 

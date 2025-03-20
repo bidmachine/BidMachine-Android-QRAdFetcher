@@ -2,13 +2,14 @@ package io.bidmachine.qr_ad_fetcher.ad
 
 import android.app.Activity
 import android.content.Context
-import com.explorestack.iab.CacheControl
-import com.explorestack.iab.IabError
-import com.explorestack.iab.mraid.MraidInterstitial
-import com.explorestack.iab.mraid.MraidInterstitialListener
-import com.explorestack.iab.mraid.MraidType
-import com.explorestack.iab.utils.IabClickCallback
+import io.bidmachine.iab.CacheControl
+import io.bidmachine.iab.IabError
+import io.bidmachine.iab.mraid.MraidInterstitial
+import io.bidmachine.iab.mraid.MraidInterstitialListener
+import io.bidmachine.iab.mraid.MraidType
+import io.bidmachine.iab.utils.IabClickCallback
 import io.bidmachine.qr_ad_fetcher.Helper
+import io.bidmachine.rendering.model.PrivacySheetParams
 
 class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
@@ -16,12 +17,12 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
     override fun loadAd(context: Context, adm: String) {
         interstitial = MraidInterstitial.newBuilder()
-                .setCacheControl(CacheControl.FullLoad)
-                .setListener(Listener(context, adListener))
-                .build(context)
-                .apply {
-                    load(adm)
-                }
+            .setCacheControl(CacheControl.FullLoad)
+            .setListener(Listener(context, adListener))
+            .build(context)
+            .apply {
+                load(adm)
+            }
     }
 
     override fun showAd(activity: Activity) {
@@ -38,7 +39,7 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
 
 
     private class Listener(private val context: Context, private val listener: Ad.Listener) :
-            MraidInterstitialListener {
+        MraidInterstitialListener {
 
         override fun onLoaded(mraidInterstitial: MraidInterstitial) {
             listener.onAdLoaded()
@@ -60,9 +61,11 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
             listener.onAdExpired()
         }
 
-        override fun onOpenBrowser(mraidInterstitial: MraidInterstitial,
-                                   url: String,
-                                   callback: IabClickCallback) {
+        override fun onOpenUrl(
+            mraidInterstitial: MraidInterstitial,
+            url: String,
+            callback: IabClickCallback
+        ) {
             listener.onAdClicked()
 
             Helper.openBrowser(context, url) {
@@ -75,6 +78,29 @@ class InterstitialAd(private val adListener: Ad.Listener) : Ad {
         }
 
         override fun onPlayVideo(mraidInterstitial: MraidInterstitial, url: String) {
+
+        }
+
+        override fun onStorePicture(
+            mraidInterstitial: MraidInterstitial,
+            url: String,
+            iabClickCallback: IabClickCallback
+        ) {
+
+        }
+
+        override fun onCalendarEvent(
+            mraidInterstitial: MraidInterstitial,
+            url: String,
+            iabClickCallback: IabClickCallback
+        ) {
+
+        }
+
+        override fun onOpenPrivacySheet(
+            mraidInterstitial: MraidInterstitial,
+            privacySheetParams: PrivacySheetParams
+        ) {
 
         }
 
