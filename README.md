@@ -11,6 +11,4 @@
 
 ### APK
 
-APK are [here](app/release)
-
-[Releases](../../releases) also contain APK
+Please find the APK in the latest release's [artifacts](../../releases)

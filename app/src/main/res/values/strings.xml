@@ -3,9 +3,9 @@
     <string name="app_name">QR Ad Fetcher</string>
 
     <string name="choose_ad_type">Choose ad type</string>
-    <string name="banner">Banner</string>
-    <string name="interstitial">Interstitial</string>
-    <string name="video">Video</string>
+    <string name="banner">MRAID Banner</string>
+    <string name="interstitial">MRAID Interstitial</string>
+    <string name="video">VAST Video</string>
 
     <string name="choose_action">Choose action</string>
     <string name="home">Home</string>
