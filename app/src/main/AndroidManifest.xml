@@ -32,7 +32,10 @@
 
         <activity android:name=".activity.QRScannerActivity" />
 
-        <activity android:name=".activity.AdManagerActivity" />
+        <activity
+            android:name=".activity.AdManagerActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
 
     </application>
 
